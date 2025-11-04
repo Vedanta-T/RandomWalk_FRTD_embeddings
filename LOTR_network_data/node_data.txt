@@ -1,0 +1,128 @@
+node_id	name
+0	Anborn
+1	Aragorn
+2	Arod
+3	Arwen
+4	Asfaloth
+5	Frodo
+6	Willie Banks
+7	Baranor
+8	Beechbone
+9	Beorn
+10	Beregond
+11	Bergil
+12	Bilbo
+13	Bob
+14	Folco Boffin
+15	Fredegar Bolger
+16	Tom Bombadil
+17	Boromir
+18	Melilot Brandybuck
+19	Merry
+20	Bregalad
+21	Barliman Butterbur
+22	Celeborn
+23	Ceorl
+24	Rosie Cotton
+25	Cirdan
+26	Damrod
+27	Denethor
+28	Derufin
+29	Dervorin
+30	Duilin
+31	Duinhir
+32	Durin’s Bane
+33	Dain
+34	Dunhere
+35	Elfhelm
+36	Elladan and Elrohir
+37	Elrond
+38	Eomer
+39	Eowyn
+40	Erestor
+41	Erkenbrand
+42	Faramir
+43	Fastred
+44	Bill Ferny
+45	Fimbrethil
+46	Finglas
+47	Firefoot
+48	Fladrif
+49	Forlong
+50	Galadriel
+51	Galdor
+52	Sam
+53	Gamling
+54	Gandalf
+55	Ghan-buri-Ghan
+56	Gildor Inglorion
+57	Gimli
+58	Glorfindel
+59	Golasgil
+60	Goldberry
+61	Gollum
+62	Gorbag
+63	Gothmog
+64	Grimbeorn
+65	Grimbold
+66	Grishnakh
+67	Gwaihir
+68	Halbarad
+69	Haldir
+70	Harding
+71	Hasufel
+72	Mat Heathertoes
+73	Herefara
+74	Herubrand
+75	Hirluin
+76	Hob Hayward
+77	Hurin
+78	Hama
+79	Imrahil
+80	Ingold
+81	Ioreth
+82	Lagduf
+83	Landroval
+84	Legolas
+85	Lindir
+86	Lugdush
+87	Mablung
+88	Maggot
+89	Mauhur
+90	Meneldor
+91	Mouth of Sauron
+92	Muzgash
+93	Nob
+94	Willow
+95	Noakes
+96	Orophin
+97	Odo Proudfoot
+98	Sancho Proudfoot
+99	Radagast
+100	Radbug
+101	Rumil
+102	Ted Sandyman
+103	Saruman
+104	Shagrat
+105	Shelob
+106	Robin Smallburrow
+107	Snaga
+108	Targon
+109	The King of the Dead
+110	Thranduil
+111	Theoden
+112	Theodred
+113	Everard Took
+114	Pippin
+115	Treebeard
+116	Daddy Twofoot
+117	Ufthak
+118	Ugluk
+119	Watcher in the Water
+120	Will Whitfoot
+121	Widow Rumble
+122	Windfola
+123	Angmar
+124	Wormtongue
+125	Widfara
+126	Sauron
