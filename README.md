@@ -1,5 +1,5 @@
 # RandomWalk_FRTD_embeddings
-Repository accompanying [paper link] 
+Repository accompanying https://arxiv.org/abs/2512.02694
 
 ## File description:
 
@@ -8,15 +8,20 @@ Repository accompanying [paper link]
 3. graph_alignment.py : Contains functions for graph alignment using FRTDs alone and FUGAL-FRTD method.
 4. graph_randomisation.py : Containts functions for graph randomization, i.e. MCMC sampling from the FRTD distance ensemble using parallel tempering
 
-The jupyter notebook files contain examples and code to reproduce the results in the paper and demonstrate how to use the method, however these require upstream data sources
-mentioned in the respective notebooks. The LOTR network data is provided.
+The jupyter notebook files contain examples and code to reproduce the results in the paper and demonstrate how to use the method, however these require upstream data sources mentioned in the respective notebook. An example notebook is included for role extraction for the lord of the rings inter character network for which the data is provided.
+
+The role benchmarks folder contains the scripts to generate the role extraction results in the paper the description is as follows:
+1. datasets.py : Obtains the various real network datasets and labels from upstream sources. Please cite the upstream sources (described in the paper) if you use this data in your work.
+2. embeddings.py : Uses the methods provided by the GraphEmbedding repository (https://github.com/shenweichen/GraphEmbedding/blob/master/README.md) to construct the baselines.
+3. benchmark.py : Runs a benchmark on a selection of real datasets, reporting runtime and macrof1 score.
+4. benchmark_synthetic.py : Runs a benchmark on the synthetic network models described in the paper. 
 
 The FUGAL_FRT folder relies on the reference code originally written for the FUGAL algorithm [1, 2] modified to also include the FUGAL-FRTD algorithm, this can be called more easily from the graph_alignment.py wrapper. 
 
 
 ## Requirements:
 
-The FRTD computation function requires only numpy and scipy, however the more advanced optional applications rely on networkx, matplotlib, sklearn, tqdm, ot, and pathos.
+The FRTD computation function requires only numpy and scipy, however the more advanced optional applications rely on networkx, matplotlib, sklearn, tqdm, ot, and pathos. The comparison scripts have additional dependencies for the GraphEmbedding repository to implement struc2vec.
 
 
 ## References:
