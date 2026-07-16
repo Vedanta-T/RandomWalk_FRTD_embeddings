@@ -2,6 +2,7 @@ import networkx as nx
 import numpy as np
 import scipy
 import pandas as pd
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 from sklearn.manifold import TSNE
@@ -11,6 +12,8 @@ from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture, BayesianGaussianMixture
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import silhouette_score
+
+import community as community_louvain
 
 from helpers import generate_embedding, combined_embeddings
 

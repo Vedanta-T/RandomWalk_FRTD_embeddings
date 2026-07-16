@@ -8,8 +8,9 @@ import time
 
 from helpers import generate_embedding, compute_distance_matrix, combined_embeddings
 
+import os
 import sys
-custom_path = 'FUGAL-FRT/helpers'
+custom_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Fugal-FRT', 'helpers')
 sys.path.append(custom_path)
 from pred import predict_alignment
 
