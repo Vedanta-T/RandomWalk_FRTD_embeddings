@@ -48,7 +48,8 @@ ALGORITHMS = {
     'GraphWave': (em.graphwave,  'l2'),
     'struc2vec': (em.struc2vec,  'l2'),
     'FRTD':      (em.frtd,       hellinger),
-    'degree':    (em.degree,     'l2')
+    'degree':    (em.degree,     'l2'),
+    'spectral':  (em.spectral_embedding, 'l2')
 }
 
 
@@ -93,8 +94,18 @@ EXPERIMENTS = {
             'q': None,
             'alpha': 0.5,
         },
-        'repeats': 10,
-    }
+        'repeats': 100,
+    },
+    'SBM_scaling': {
+        'loader': ds.sbm,
+        'parameter': 'n',
+        'values': [32, 64, 128, 256, 512, 1024, 2048],
+        'fixed': {
+            'c_in': 8,
+            'c_out': 2,
+        },
+        'repeats': 100,
+    },
 '''
 
 # ============================================================================

@@ -7,7 +7,7 @@ Each function returns (emb, nodes), where emb is a 2-D NumPy array of shape
   - rolx(G)       :    Henderson et al. 2012, NMF on ReFeX features (k=4)
   - graphwave(G)  :    Donnat et al. 2018, paper defaults (n_samples=50)
   - struc2vec(G)  :    Ribeiro et al. 2017, via shenweichen/GraphEmbedding
-  - frtd(G)       :    first-return-time distribution (absorbing-walker form)
+  - frtd(G)       :    first-return-time distribution
 """
 from __future__ import annotations
 
@@ -178,3 +178,15 @@ def frtd(G, t_max=200, include_tail=True):
                        alpha = 0.1, #Teleportation probability
                        nodelist=list(G.nodes)
                              ), list(G.nodes)
+
+def spectral_embedding(G, k=5):
+    """Spectral embedding of the normalized Laplacian."""
+    nodes = list(G.nodes())
+    A = nx.adjacency_matrix(G)
+    D = np.diag(A.sum(axis=1))
+    D_inv_sqrt = np.diag(1.0 / np.sqrt(A.sum(axis=1)))
+    A_norm = D_inv_sqrt @ A@ D_inv_sqrt
+    eigvals, eigvecs = sp.linalg.eigsh(A_norm, k=k, which='LA')
+    if np.isnan(eigvecs[:, :k]).any():
+        print("NaN values found in spectral embedding.")
+    return eigvecs[:, :k], nodes

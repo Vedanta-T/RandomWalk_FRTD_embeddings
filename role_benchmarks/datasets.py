@@ -107,6 +107,34 @@ def synthetic_rgg_vs_er(n1=256, n2=256, k=8, seed=42):
                 G.add_edge(i, j)
     return G, {v: (0 if v < n1 else 1) for v in G.nodes()}
 
+def sbm(n=512, c_in=8, c_out=2, seed=42):
+    """Stochastic block model with two equal-sized communities, where
+    each node has expected degree c_in + c_out. Role = community label.
+    """
+    rng = np.random.default_rng(seed)
+    sizes = [n // 2, n - n // 2]
+    p_in = c_in / (sizes[0] - 1)
+    p_out = c_out / sizes[1]
+    G = nx.stochastic_block_model(sizes, [[p_in, p_out], [p_out, p_in]], seed=seed)
+    old_labels = {
+        v: 0 if v < sizes[0] else 1
+        for v in G.nodes()
+    }
+    isolates = list(nx.isolates(G))
+    G.remove_nodes_from(isolates)
+
+    # Relabel remaining nodes consecutively
+    mapping = {old: new for new, old in enumerate(sorted(G.nodes()))}
+    G = nx.relabel_nodes(G, mapping)
+    # Update labels using the mapping
+    labels = {
+        mapping[old]: old_labels[old]
+        for old in mapping
+    }
+    if len(isolates) > 0:
+        print(f"Found {len(isolates)} isolated nodes.")
+    return G, labels
+
 
 
 
