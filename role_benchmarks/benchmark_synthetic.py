@@ -237,8 +237,8 @@ print(csv_path)
 
 plt.rcParams['figure.dpi'] = 200
 
-colors = ['blue', 'red', 'green', 'purple', 'k', 'magenta']
-markers = ['x', 's', '^', 'o', '*']
+colors = ['blue', 'red', 'green', 'purple', 'k', 'magenta', 'orange']
+markers = ['x', 's', '^', 'o', '*', 'D']
 
 
 for exp_name in df['experiment'].unique():

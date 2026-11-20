@@ -348,7 +348,7 @@ def run_parallel_tempering(target_graph, #Provide target graph (networkx graph)
                   directed=False, #If networks are directed
                   alpha=None, #Teleportation probability (if None then no teleportation)
                   normalise_embedding=True, #If embeddings should be normalised
-                  operation='degree-preserving', #Choice of operation (move-edge or degree-preserving)
+                  operation='degree-preserving', #Choice of operation (move-edge, degree-preserving, or both)
                   betas=None, #List of temperatures for replicas (length of list corresponds to number of replicas)
                   n_states=40, #If betas list is not provided then number of replicas
                   beta_min = 0, #Minimum temp (only needed if betas is not provided)
@@ -357,7 +357,8 @@ def run_parallel_tempering(target_graph, #Provide target graph (networkx graph)
                   swap_interval = 500, #Interval at which to attempt swaps (sampling is also done at this interval)
                   print_outputs=False, #Print minimum energy at each swap interval
                   combine_embeddings=False, #Combine embeddings for directed graphs
-                  sample=True #If graphs other than the minimum should be sampled (sampling is done at the swap interval to ensure mixing between samples)
+                  sample=True, #If graphs other than the minimum should be sampled (sampling is done at the swap interval to ensure mixing between samples)
+                  p = 0.5 #Probability of an edge move (vs degree-preserving rewiring) per step when operation='both'
                   ):
 
     '''
@@ -401,41 +402,44 @@ def run_parallel_tempering(target_graph, #Provide target graph (networkx graph)
 
     run_move_edges = lambda state: run_N_steps(state, 1)
     run_degree_preserving = lambda state: run_N_steps(state, 0.0)
+    run_both = lambda state: run_N_steps(state, p)
     np.seterr(all='ignore')
-    pool = pathos.pools.ProcessPool() 
+    pool = pathos.pools.ProcessPool()
     step_number = 0
     print(np.amin([states[j].similarity for j in range(len(states))]))
     n_its = int(n_steps/swap_interval)
-    for i in tqdm(range(n_its)):
-        if operation=='move-edge':
-            states = pool.map(run_move_edges, states, chunksize=1)
-        elif operation=='degree-preserving':
-            states = pool.map(run_degree_preserving, states, chunksize=1)
+    try:
+        for i in tqdm(range(n_its)):
+            if operation=='move-edge':
+                states = pool.map(run_move_edges, states, chunksize=1)
+            elif operation=='degree-preserving':
+                states = pool.map(run_degree_preserving, states, chunksize=1)
+            elif operation=='both':
+                states = pool.map(run_both, states, chunksize=1)
 
-        step_number += swap_interval
+            step_number += swap_interval
 
-        if step_number >= burn_in:
-            print('Collecting samples...')
-            minimum_state = np.argmin([states[j].similarity for j in range(len(states))])
-            minimum_edgelists.append(states[minimum_state].edges)
-            if sample:
-                for state in states:
-                    samples[state.beta].append(state.edges)
-                
+            if step_number >= burn_in:
+                print('Collecting samples...')
+                minimum_state = np.argmin([states[j].similarity for j in range(len(states))])
+                minimum_edgelists.append(states[minimum_state].edges)
+                if sample:
+                    for state in states:
+                        samples[state.beta].append(state.edges)
 
-        min_diffs.append(np.amin([states[j].similarity for j in range(len(states))])) 
-        
-        for state in states:
-            diffs_by_temp[state.beta] = diffs_by_temp[state.beta] + state.new_history
-            state.new_history = []
+            min_diffs.append(np.amin([states[j].similarity for j in range(len(states))]))
 
-        if print_outputs:
-            print(np.amin([states[j].similarity for j in range(len(states))]))
-        
-        
-        temp_swaps(swap_steps, states)
-    
-            
+            for state in states:
+                diffs_by_temp[state.beta] = diffs_by_temp[state.beta] + state.new_history
+                state.new_history = []
+
+            if print_outputs:
+                print(np.amin([states[j].similarity for j in range(len(states))]))
+
+            temp_swaps(swap_steps, states)
+    except KeyboardInterrupt:
+        print("Interrupted — returning partial results")
+
     if sample:
         return states, minimum_edgelists, min_diffs, diffs_by_temp, samples, betas
     return states, minimum_edgelists, min_diffs, diffs_by_temp, betas

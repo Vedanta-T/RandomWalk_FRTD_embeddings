@@ -49,7 +49,7 @@ def find_k_clusters(G = None, embedding=None, HellingerPC = None, n_clusters=2, 
     if method == 'gmm' or method == 'GMM' or method == 'Gaussian Mixture Model':
         clusters = EC.gmm(n_clusters=n_clusters, **kwargs)
     elif method=='kmeans' or method=='kMeans':
-        clusters = EC.kmeans(k=n_clusters, **kwargs)
+        clusters = EC.kMeans(k=n_clusters, **kwargs)
     elif method == 'BayesianGMM' or  method=='bayesian-gmm' or method=='bgmm':
         clusters = EC.bayesian_gmm(n_clusters=n_clusters, **kwargs)
     else:

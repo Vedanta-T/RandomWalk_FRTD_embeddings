@@ -12,7 +12,8 @@ def generate_embedding(G=None, #Networkx graph
                        progress_bar=False, #Print progress bar
                        normalise_embedding=False, #Normalise embedding by appending remaining probability mass to last step
                        teleport=False, #Teleport to consider directed networks
-                       alpha = 0.1, #Teleportation probability 
+                       alpha = 0.1, #Teleportation probability
+                       nodelist = None, #Node ordering for the rows of the embedding (default: range(N))
                        **kwargs):
     '''
     Requires : Graph or Adjacency matrix
@@ -25,7 +26,10 @@ def generate_embedding(G=None, #Networkx graph
     if A is None:
         if G is None:
             raise ValueError('Please provide either networkx graph or adjacency matrix.')
-        A = nx.to_scipy_sparse_array(G, nodelist=range(G.number_of_nodes()))
+        if nodelist is None:
+            A = nx.to_scipy_sparse_array(G, nodelist=range(G.number_of_nodes()))
+        else:
+            A = nx.to_scipy_sparse_array(G, nodelist=nodelist)
     matrix = first_return_dist(A, K=M, teleport=teleport, alpha=alpha, progress_bar=progress_bar)
     if normalise_embedding:
         matrix = np.hstack([matrix, 1-np.sum(matrix, axis=1)[:, np.newaxis]])
