@@ -8,12 +8,15 @@ Each function returns (emb, nodes), where emb is a 2-D NumPy array of shape
   - graphwave(G)  :    Donnat et al. 2018, paper defaults (n_samples=50)
   - struc2vec(G)  :    Ribeiro et al. 2017, via shenweichen/GraphEmbedding
   - frtd(G)       :    first-return-time distribution
+  - spectral_embedding(G) : leading eigenvectors of the normalised adjacency
 """
 from __future__ import annotations
 
 import contextlib
 import io
 import os
+import random
+import sys
 import tempfile
 import warnings
 
@@ -23,15 +26,8 @@ import networkx as nx
 from sklearn.decomposition import NMF
 
 from ge.models.struc2vec import Struc2Vec as _Struc2Vec
-import ge
 
-
-import sys
-
-PROJECT_ROOT = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '..')
-)
-
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, PROJECT_ROOT)
 
 from helpers import generate_embedding
@@ -135,7 +131,14 @@ def graphwave(G, scales=(1.0, 5.0), n_samples=50, t_max=100.0):
 # --- struc2vec (Ribeiro et al. 2017, via shenweichen/GraphEmbedding) --------
 
 def struc2vec(G, dimensions=128, walk_length=40, num_walks=10, window=10,
-              k_max=None):
+              k_max=None, seed=None):
+    """struc2vec is stochastic (unseeded random walks). Passing `seed` seeds Python's
+    `random` and NumPy's global RNG.
+    k_max=None places no cap on the number of layers, which is equivalent to the
+    graph diameter."""
+    if seed is not None:
+        random.seed(seed)
+        np.random.seed(seed)
     nodes = list(G.nodes())
     with tempfile.TemporaryDirectory() as tmp, \
          contextlib.redirect_stdout(io.StringIO()), \
@@ -154,30 +157,23 @@ def struc2vec(G, dimensions=128, walk_length=40, num_walks=10, window=10,
                     workers=1, iter=5)
         wv = model.w2v_model.wv
         emb = np.array([wv[str(v)] for v in nodes])
-        #sg = ge.SkipGramModel(
-        #rw.totalNodes, rw.embedDim
-        #)
-    
-        #rw.learnNodeEmbedding(sg)
-    
-        #emb = np.array([
-        #    rw.getNodeEmbedding(v)
-        #    for v in nodes
-        #])
-
     return emb, nodes
 
 
-def frtd(G, t_max=200, include_tail=True):
-    return generate_embedding(G=G, #Networkx graph
-                       A=None, #Sparse adjacency matrix
-                       M=t_max,  #Max number of steps
-                       progress_bar=False, #Print progress bar
-                       normalise_embedding=include_tail, #Normalise embedding by appending remaining probability mass to last step
-                       teleport=False, #Teleport to consider directed networks
-                       alpha = 0.1, #Teleportation probability
-                       nodelist=list(G.nodes)
-                             ), list(G.nodes)
+# --- FRTD (first-return-time distribution) ----------------------------------
+
+def frtd(G, K=128, include_tail=False):
+    """First-return-time distribution f_i(t) for t = 1..K (Algorithm B.1 of the paper).
+
+    K            : number of return-time steps.
+    include_tail : append the remaining mass 1 - sum_t f_i(t) as an extra bin.
+    The returned array also contains the t = 0 column (always zero), which does not
+    affect any distance between embeddings.
+    """
+    nodes = list(G.nodes)
+    return generate_embedding(G=G, M=K + 1, normalise_embedding=include_tail,
+                              teleport=False, nodelist=nodes), nodes
+
 
 def spectral_embedding(G, k=5):
     """Spectral embedding of the normalized Laplacian."""

@@ -242,6 +242,12 @@ def celegans_neurons():
 
 
 def ATN():
+    """OpenFlights airport network (3188 nodes) with airport-type labels.
+
+    Label 3 is an 'other' category, not a meaningful role, so its
+    147 nodes are removed; the benchmark runs on the remaining 3041 nodes
+    (3 classes), 28 of which become isolated after the removal.
+    """
     e = os.path.join(CACHE, 'ATN.edgelist')
     l = os.path.join(CACHE, 'ATN_labels.pkl')
 
